@@ -1,0 +1,18 @@
+[package]
+name = "flappy_dragon"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bracket-lib="0.8.0"
+bracket-color="0.8.7"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
+[[bin]]
+name = "figasBrack"
+path = "src/bin/figasBrack.rs"

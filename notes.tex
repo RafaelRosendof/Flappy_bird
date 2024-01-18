@@ -1,0 +1,117 @@
+\documentclass{article}
+
+\title{Rust Game Development Lecture}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+% Your introduction content goes here.
+Aqui vamos para uma introdução e documentação do jogo flappy dragon que vou produzir em rust baseado em um livro para ajudar ao aprendizado da linguagem de programação rust vamos começar com uma seccção que contem a introdução do jogo chamada e ao longo do tempo vou atualizando essa introdução e vou atualizando esse documento para me lembrar de todos os detalhes, além de ter os comentários dentro do código, aqui também vai ter alguns comentários teóricos e muito provável que alguns trechos que eu venha detalhar com mais profundidade. Sem mais delongas vamos ao que interessa, primeira parte 
+\vspace{0.3cm}
+
+\section{Introdução}
+% Content related to setting up the Rust development environment.
+Vamos começar pelo entendimento do loop do jogo, O loop do jogo começa com a abertura da janela seguido dos gráficos e os outros recursos. E normalmente a tela sempre é atualizada entre 30 a 60 vezes por segundo ou fps. Todo passo do jogo que corresponde a esse loop se chama ocasionalmente de "tick()". Todavia vamos resumir para que fique claro. Passo 1 Start, Passo 2 Configure app , Janela e Graphics. Passo 3 Poll OS é para receber o Input State seja o mouse teclado ou joystick, o próprio game engine ou o sistema operacional cuida disso. Passo 4 Chamar a função tick logo em seguida atualizar a tela e por último a opção de Sair ou então volta para o passo 3. 
+
+\\
+
+\vspace{0.2cm}
+Nesse projeto vamos utilizar a biblioteca do rust chamada Bracket-lib e Bracket-Terminal, vale olhar a documentação depois incluindo mais exemplos, foi uma biblioteca desenhada para simplificar a curva de aprendizado, fazendo o uso de uma maior abstração em aspectos mais complexos de desenvolvimento de jogos. É uma família de bibliotecas qie incluem geração de números aleatórios, geometria, procurador de arquivos, color handling e alguns algoritimos comuns de desenvolvimento de jogos. 
+
+\\
+
+Bracket-Terminal is the display portion of bracket-lib. Providing an emulated console that con randering in plataforms ranging from text-console to web assembly, including OpenGL, Vulkan and his native suport is in OpenGL. Nota: algumas coisas ficarão em português outras em inglês  
+
+\section{Entendendo o Motor Gráfico no Bracket-lib}
+% Abordando conceitos fundamentais de Rust relevantes para o desenvolvimento de jogos.
+
+Nesta seção, vamos explorar o motor gráfico do `bracket-lib` e aprender como utilizá-lo. Primeiramente, vamos criar um projeto com o comando:
+
+\begin{verbatim}
+cargo new nome_qualquer
+\end{verbatim}
+
+Dentro do arquivo `Cargo.toml`, adicione a seguinte linha abaixo da seção "[dependencies]":
+
+\begin{verbatim}
+bracket-lib = "~0.8.1"
+\end{verbatim}
+
+Nota: Para auxiliar nesta parte, você pode encontrar um arquivo chamado `figasBrack.rs` que utiliza o `bracket-lib` para fornecer exemplos, incluindo comentários dentro do código.
+
+\impl GameState for State: Esta é uma implementação de um trait chamado `GameState` para a estrutura `State`. Traits em Rust são semelhantes a interfaces em outras linguagens de programação. O trait `GameState` define métodos necessários para que um tipo seja considerado um estado de jogo. No caso, o método `tick` é implementado para atualizar o estado do jogo a cada iteração.
+
+\begin{verbatim}
+fn tick(&mut self, ctx: &mut BTerm) { ... }
+\end{verbatim}
+
+Este é o método `tick` que faz parte do trait `GameState`. Ele recebe uma referência mutável para a instância de `State` e uma referência mutável para o contexto do jogo (`BTerm`). Este método é chamado a cada iteração do loop principal do jogo.
+
+\begin{verbatim}
+ctx.cls();
+\end{verbatim}
+
+Limpa o conteúdo do terminal, preparando para a próxima renderização.
+
+\begin{verbatim}
+ctx.print(1, 1, "Hello, Bracket Terminal!");
+\end{verbatim}
+
+Imprime o texto "Hello, Bracket Terminal!" nas coordenadas (1, 1) do terminal.
+
+\fn main() -> BError { ... }: Esta é a função principal do programa. Ela retorna um tipo `BError`, que representa um erro relacionado à biblioteca `bracket-lib`.
+
+\begin{verbatim}
+let context = BTermBuilder::simple80x50() ...
+\end{verbatim}
+
+Aqui, é criada uma instância de `BTermBuilder` configurada para um terminal de 80x50 caracteres.
+
+\begin{verbatim}
+.with_title("Flappy Dragon") ...
+\end{verbatim}
+
+Define o título da janela do terminal como "Flappy Dragon".
+
+\begin{verbatim}
+.build()?;
+\end{verbatim}
+
+Constrói o contexto do jogo com as configurações especificadas. O `?` é usado para propagar erros, caso a construção falhe.
+
+\begin{verbatim}
+main_loop(context, State{});
+\end{verbatim}
+
+Inicia o loop principal do jogo chamando a função `main-loop`, passando o contexto do jogo criado e uma instância inicial do estado do jogo (`State{}`).
+
+\\
+
+O uso do \impl{} é para desenvolver métodos que só podem ser acessados pela aquela `struct`. Por exemplo, se definirmos uma `struct` chamada `Retangulo` com altura e largura como floats, podemos criar uma \impl{} para `Retangulo` que contém uma função \fn{} `area(&self)` que retorna um `f64`, multiplicando `self.width * self.height`.
+
+\\
+
+Houve uma pausa no capítulo 3, página 51, abordando erros.
+
+
+\section{Game Development Basics}
+% Introduction to game development concepts using Rust.
+
+\section{Graphics and Rendering}
+% Discussing graphics and rendering in Rust game development.
+
+\section{Input Handling}
+% Covering input handling techniques for Rust games.
+
+\section{Game Logic and State}
+% Exploring game logic and state management in Rust.
+
+\section{Conclusion}
+% Summarizing key points and concluding the lecture.
+
+\end{document}
+
