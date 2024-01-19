@@ -80,9 +80,9 @@ impl Obstacle {
       ctx.set(
         screen_x,
         y,
-        GREEN3,
+        GREEN3, //cores
         BLACK,
-        to_cp437('|'),
+        to_cp437('|'), //Formato do obstaculo, no caso um tronco
       );
     }
 
@@ -125,30 +125,30 @@ struct State { //Struct do estado do jogo atual, aqui temos alguns componentes q
 impl State { // implementando as propriedades da struct State 
   fn new() -> Self {
     State {
-      player: Player::new(5, 25),
-      frame_time: 0.0,
-      obstacle: Obstacle::new(SCREEN_WIDTH, 0),
-      mode: GameMode::Menu,
-      score: 0,
+      player: Player::new(5, 25),//criando o jogador com as posições iniciais que ele vai ficar 
+      frame_time: 0.0,//iniciando o fps 
+      obstacle: Obstacle::new(SCREEN_WIDTH, 0), //iniciando os obstaculos e definindo suas propriedades 
+      mode: GameMode::Menu, // o estado atual assim que abre a janela 
+      score: 0, //iniciando o score com 0
     }
   }
 
-  fn restart(&mut self) {
-    self.player = Player::new(5, 25);
+  fn restart(&mut self) { //criando a função start para caso o jogador venha a morrer o jogo se reinicia 
+    self.player = Player::new(5, 25); //mesma coisa da função new logo em cima 
     self.frame_time = 0.0;
     self.obstacle = Obstacle::new(SCREEN_WIDTH, 0);
-    self.mode = GameMode::Playing;
+    self.mode = GameMode::Playing; //a diferença é que agora o modo atual será de Playing
     self.score = 0;
   }
 
-  fn main_menu(&mut self, ctx: &mut BTerm) {
-    ctx.cls();
-    ctx.print_centered(5, "Welcome to Flappy Dragon");
-    ctx.print_centered(8, "(P) Play Game");
+  fn main_menu(&mut self, ctx: &mut BTerm) { //iniciando a função main do jogo 
+    ctx.cls(); //limpando o terminal sempre no começo
+    ctx.print_centered(5, "Welcome to Flappy Dragon"); //agora é printado algumas mensagens na tela incluindo a sua posição na janela 
+    ctx.print_centered(8, "(P) Play Game"); //por estar como centered não precisa do X somente o Y
     ctx.print_centered(9, "(Q) Quit Game");
 
-    if let Some(key) = ctx.key {
-      match key {
+    if let Some(key) = ctx.key { //aqui fazemos o tratamento para saber se o jogador quer sair ou somente jogar 
+      match key { //verificar qual tecla foi digitada e colocar o que fazer 
         VirtualKeyCode::P => self.restart(),
         VirtualKeyCode::Q => ctx.quitting = true,
         _ => {}
@@ -156,15 +156,15 @@ impl State { // implementando as propriedades da struct State
     }
   }
 
-  fn dead(&mut self, ctx: &mut BTerm) {
-    ctx.cls();
-    ctx.print_centered(5, "You are dead!");
+  fn dead(&mut self, ctx: &mut BTerm) { //função para caso a condição que defini como dead aconteça
+    ctx.cls(); //limpa o terminal
+    ctx.print_centered(5, "You are dead!"); //voce morreu 
     ctx.print_centered(6, &format!("You earned {} points", self.score));
-    ctx.print_centered(8, "(P) Play Again");
+    ctx.print_centered(8, "(P) Play Again"); //mostra os pontos e as opções de jogar novamente ou sair do jogo 
     ctx.print_centered(9, "(Q) Quit Game");
 
     if let Some(key) = ctx.key {
-      match key {
+      match key { //mesma função alí em cima 
         VirtualKeyCode::P => self.restart(),
         VirtualKeyCode::Q => ctx.quitting = true,
         _ => {}
@@ -173,37 +173,45 @@ impl State { // implementando as propriedades da struct State
   }
 
   fn play(&mut self, ctx: &mut BTerm) {
-    ctx.cls_bg(NAVY);
-    self.frame_time += ctx.frame_time_ms;
+    ctx.cls_bg(NAVY); //define a cor de fundo da tela
+    self.frame_time += ctx.frame_time_ms; //adiciona o tempo desde o último quadro ao tempo total decorrido
+
+    //verifica se é hora de atualizar a posição do jogador com base na gravidade
     if self.frame_time > FRAME_DURATION {
       self.frame_time = 0.0;
 
-      self.player.gravity_and_move();
+      self.player.gravity_and_move(); //gravidade aqui 
     }
+    //verifica se a telca de espaço foi presisonada para fazer o jogador pular
     if let Some(VirtualKeyCode::Space) = ctx.key {
       self.player.flap();
     }
+    //renderiza o jogador na tela 
     self.player.render(ctx);
+    //exibe o jogador na tela e a pontuação  
     ctx.print(0, 0, "Press SPACE to flap.");
     ctx.print(0, 1, &format!("Score: {}", self.score)); // (4)
 
+    //renderiza o obstáculo 
     self.obstacle.render(ctx, self.player.x); // (5)
+    //verifica se o jogador ultrapassou o obstáculo 
     if self.player.x > self.obstacle.x { // (6)
-      self.score += 1;
-      self.obstacle = Obstacle::new(
+      self.score += 1; //atualiza a pontuação 
+      self.obstacle = Obstacle::new( //criando um novo obstáculo na tela 
           self.player.x + SCREEN_WIDTH, self.score
       );
     }
+    //verifica se o jogador ultrapassou o limite vertical ou colidiu com algo 
     if self.player.y > SCREEN_HEIGHT || 
         self.obstacle.hit_obstacle(&self.player)
     {
-      self.mode = GameMode::End;
+      self.mode = GameMode::End; //game over caso aconteça isso 
     }
   }
 }
 
 impl GameState for State {
-  fn tick(&mut self, ctx: &mut BTerm) {
+  fn tick(&mut self, ctx: &mut BTerm) { //função tick que mostra todas as opções do jogo seja o menu play ou end
     match self.mode {
       GameMode::Menu => self.main_menu(ctx),
       GameMode::End => self.dead(ctx),
@@ -212,10 +220,11 @@ impl GameState for State {
   }
 }
 
+//Cria uma instância de 'BTermBuilder' para configurar as propriedades do terminal 
 fn main() -> BError {
-  let context = BTermBuilder::simple80x50()
-    .with_title("Flappy Dragon")
-    .build()?;
+  let context = BTermBuilder::simple80x50()//tamanho da janela
+    .with_title("Flappy Figas")//flappy figas 
+    .build()?; //construção e ciração do contexto do terminal. 
 
   main_loop(context, State::new())
 }
